@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="CROC"><meta name="theme-color" content="#2b3033"><link rel="apple-touch-icon" href="logo.png"><link rel="icon" href="logo.png"><title>CROC</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#2b3033;--ral:#383e42;--card:#41484d;--line:#4d555a;--sand:#dcd0b0;--txt:#eef0f1;--mut:#9aa3a8;--g:#4cc38a;--o:#e8a33d;--r:#e0584a}
+body{margin:0;font-family:Inter,-apple-system,"Segoe UI",sans-serif;color:var(--txt);background:linear-gradient(180deg,var(--ral) 0%,var(--bg) 100%);min-height:100vh}
+main{max-width:520px;margin:auto;padding:24px 16px 48px}
+.logo{display:flex;justify-content:center;margin-bottom:6px}
+.logo img{width:190px;height:auto;filter:drop-shadow(0 10px 24px rgba(0,0,0,.45))}
+.sub{text-align:center;color:var(--mut);font-size:12px;letter-spacing:4px;text-transform:uppercase;margin:6px 0 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:18px;margin-top:14px;box-shadow:0 12px 30px rgba(0,0,0,.25)}
+h2{font-size:12px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--sand);margin:0 0 14px}
+select{width:100%;font-family:inherit;font-size:20px;font-weight:700;padding:14px 16px;border-radius:16px;border:1px solid var(--line);background:var(--ral);color:var(--txt);appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--sand) 50%),linear-gradient(135deg,var(--sand) 50%,transparent 50%);background-position:calc(100% - 22px) 24px,calc(100% - 16px) 24px;background-size:6px 6px;background-repeat:no-repeat}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.f{background:var(--ral);border:1px solid var(--line);border-radius:16px;padding:10px 14px}
+.f:focus-within{border-color:var(--sand)}
+.f label{display:block;font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--mut)}
+.f input{width:100%;background:none;border:none;color:var(--txt);font-family:inherit;font-size:24px;font-weight:700;outline:none;padding:4px 0 0}
+.res{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.r{background:var(--ral);border-radius:16px;padding:12px 14px}
+.r span{display:block;font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--mut)}
+.r b{font-size:28px;font-weight:800}.r b small{font-size:13px;font-weight:500;color:var(--mut)}
+.r.tot{grid-column:span 2;background:var(--sand);color:var(--ral)}.r.tot span,.r.tot small{color:#6b6450}
+.g{margin:16px 0 4px}.gt{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;font-weight:600}
+.gt i{font-style:normal;font-weight:800;font-size:16px}
+.bar{position:relative;height:8px;border-radius:4px;margin-top:10px}
+.cur{position:absolute;top:-7px;width:22px;height:22px;border-radius:50%;background:#fff;border:5px solid var(--bg);box-shadow:0 2px 10px rgba(0,0,0,.5);transform:translateX(-11px);transition:left .35s cubic-bezier(.3,1.4,.5,1)}
+.msg{margin-top:14px;padding:12px 14px;border-radius:14px;background:rgba(224,88,74,.15);color:#ffb3aa;font-size:13px;font-weight:500}
+details summary{cursor:pointer;list-style:none;font-size:12px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--sand)}
+details summary::after{content:" +"}details[open] summary::after{content:" −"}
+.note{color:var(--mut);opacity:.7;font-size:11px;margin-top:20px;text-align:center}
+</style></head><body><main>
+<div class="logo"><img src="logo.png" alt="Croc - Mimizan Plage - Salé & Sucré"></div>
+<p class="sub">Équilibrage de sorbets</p>
+<div class="card"><h2>Fruit</h2><select id="fruit"></select>
+<div class="grid" style="margin-top:10px">
+<div class="f"><label>Fruit mixé (g)</label><input id="fw" type="number" value="3000" inputmode="decimal"></div>
+<div class="f"><label>Brix (°Bx)</label><input id="brix" type="number" step="0.5" inputmode="decimal"></div>
+</div></div>
+<div class="card"><h2>À ajouter</h2><div class="res" id="res"></div><div id="msg"></div></div>
+<div class="card"><h2>Équilibre</h2><div id="gauges"></div></div>
+<div class="card"><details><summary>Réglages</summary>
+<div class="grid" style="margin-top:14px">
+<div class="f"><label>Part de fruit (%)</label><input id="fp" type="number" inputmode="decimal"></div>
+<div class="f"><label>Vitrine (°C)</label><input id="temp" type="number" value="-14" inputmode="decimal"></div>
+<div class="f"><label>POD visé (%)</label><input id="pod" type="number" value="18" step="0.5" inputmode="decimal"></div>
+<div class="f"><label>Solides visés (%)</label><input id="sol" type="number" value="28" step="0.5" inputmode="decimal"></div>
+</div></details></div>
+<p class="note">Valeurs approximatives, à valider par vos essais.</p>
+</main>
+<script>
+const F=[["Abricot",12,55],["Ananas",13,55],["Banane",21,45],["Cassis",14,35],["Cerise",16,50],["Citron",8,22],["Citron vert",7,22],["Clémentine",12,60],["Coing",12,45],["Figue",18,50],["Fraise",8,55],["Fraise des bois",9,50],["Framboise",9,45],["Fruit de la passion",15,35],["Goyave",10,50],["Grenade",15,55],["Groseille",10,35],["Kaki",18,50],["Kiwi",13,50],["Litchi",17,50],["Mandarine",12,60],["Mangue",15,55],["Melon",10,60],["Mirabelle",16,50],["Mûre",10,45],["Myrtille",12,45],["Nectarine",12,55],["Orange",11,60],["Pamplemousse",9,55],["Papaye",11,55],["Pastèque",8,65],["Pêche",11,55],["Poire",13,55],["Pomme",13,55],["Prune",14,55],["Raisin",17,55],["Rhubarbe",3,45],["Yuzu",8,20]];
+const $=id=>document.getElementById(id),sel=$("fruit");
+F.forEach((f,i)=>sel.add(new Option(f[0],i)));
+function pick(){const f=F[sel.value];$("brix").value=f[1];$("fp").value=f[2];calc()}
+const R="#e0584a",O="#e8a33d",G="#4cc38a";
+function gauge(n,v,t,min,max,a,b,c,d){const p=x=>Math.max(0,Math.min(100,(x-min)/(max-min)*100));
+ const bg=`linear-gradient(90deg,${R} ${p(a)-3}%,${O} ${p(a)+3}%,${O} ${p(b)-3}%,${G} ${p(b)+3}%,${G} ${p(c)-3}%,${O} ${p(c)+3}%,${O} ${p(d)-3}%,${R} ${p(d)+3}%)`;
+ const col=(v>=b&&v<=c)?G:(v>=a&&v<=d)?O:R;
+ return `<div class="g"><div class="gt"><span>${n}</span><i style="color:${col}">${t}</i></div><div class="bar" style="background:${bg}"><div class="cur" style="left:${p(v)}%"></div></div></div>`}
+function det(m){return m[0][0]*(m[1][1]*m[2][2]-m[1][2]*m[2][1])-m[0][1]*(m[1][0]*m[2][2]-m[1][2]*m[2][0])+m[0][2]*(m[1][0]*m[2][1]-m[1][1]*m[2][0])}
+function solve(A,b){const D=det(A);return [0,1,2].map(i=>det(A.map((r,k)=>r.map((v,j)=>j==i?b[k]:v)))/D)}
+function calc(){
+ const Fw=+$("fw").value,bx=+$("brix").value/100,fp=+$("fp").value/100,T=+$("temp").value,Q=+$("pod").value,So=+$("sol").value;
+ const P=Math.round(270+(-T-14)*15)+10,M=Fw/fp,fs=Fw*bx,stab=M*0.004;
+ let [s,x,g]=solve([[1,1.9,0.5],[1,0.7,0.18],[1,1,0.95]],[P*M/1000-1.7*fs,Q*M/100-1.1*fs,So*M/100-fs-stab]);
+ s=Math.max(0,s);x=Math.max(0,x);g=Math.max(0,g);
+ const w=M-Fw-s-x-g-stab,pac=(1.7*fs+s+1.9*x+0.5*g)/M*1000,pod=(1.1*fs+s+0.7*x+0.18*g)/M*100,sol=(fs+s+x+0.95*g+stab)/M*100;
+ const c=(n,v,k="")=>`<div class="r ${k}"><span>${n}</span><b>${v}<small> g</small></b></div>`;
+ $("res").innerHTML=c("Eau",w<0?"—":Math.round(w))+c("Saccharose",Math.round(s))+c("Dextrose",Math.round(x))+c("Glucose atomisé",Math.round(g))+c("Stabilisant",Math.round(stab))+c("Fruit",Math.round(Fw))+c("Total du mix",Math.round(M),"tot");
+ let h=gauge("PAC · dureté",pac,Math.round(pac)+" / "+P,P-80,P+80,P-40,P-15,P+15,P+40);
+ h+=gauge("POD · sucré",pod,pod.toFixed(1)+" %",Q-8,Q+8,Q-4,Q-1.5,Q+1.5,Q+4);
+ h+=gauge("Solides totaux",sol,sol.toFixed(1)+" %",15,45,22,25,33,36);
+ $("gauges").innerHTML=h;
+ let m=[];if(w<0)m.push("Trop de fruit : baisse la part de fruit dans les réglages.");if(Math.abs(pac-P)>15||Math.abs(pod-Q)>1.5||Math.abs(sol-So)>1.5)m.push("Cibles impossibles toutes ensemble avec ce fruit : ajuste les réglages.");
+ $("msg").innerHTML=m.length?`<div class="msg">${m.join("<br>")}</div>`:""}
+document.querySelectorAll("input[type=number]").forEach(e=>e.oninput=calc);sel.onchange=pick;sel.value=10;pick();
+</script></body></html>
